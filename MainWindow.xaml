@@ -263,11 +263,11 @@
                     <Border.BorderThickness>
                         <Thickness Top="1" Bottom="0" Left="0" Right="0"/>
                     </Border.BorderThickness>
-                    <TextBlock Text="All keys blocked · Touchpad and mouse remain active"
-                               FontFamily="Segoe UI" FontSize="9"
-                               Foreground="#22253A"
-                               HorizontalAlignment="Center"
-                               VerticalAlignment="Center"/>
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
+                        <TextBlock Text="Designed by Denuka Jayasundara © 2026 · Touchpad and mouse remain active"
+                                   FontFamily="Segoe UI" FontSize="9"
+                                   Foreground="#22253A"/>
+                    </StackPanel>
                 </Border>
 
                 <!-- ── CONTENT AREA ── -->

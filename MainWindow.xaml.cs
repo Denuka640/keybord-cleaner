@@ -5,9 +5,11 @@ using System.Threading;
 using System.Windows;
 using System.Windows.Forms;
 using System.Windows.Input;
+using System.Windows.Interop;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
 using System.Windows.Media.Effects;
+using System.Windows.Media.Imaging;
 using System.Windows.Threading;
 
 namespace KeyShield
@@ -71,6 +73,11 @@ namespace KeyShield
 
         private const uint WM_QUIT = 0x0012;
 
+        private const int WM_KEYDOWN    = 0x0100;
+        private const int WM_KEYUP      = 0x0101;
+        private const int WM_SYSKEYDOWN = 0x0104;
+        private const int WM_SYSKEYUP   = 0x0105;
+
         // ── Hook state ─────────────────────────────────────────────────
         private IntPtr               _hookHandle  = IntPtr.Zero;
         private LowLevelKeyboardProc _hookProc    = null!;   // keep ref — prevents GC collection
@@ -78,17 +85,65 @@ namespace KeyShield
         private volatile bool        _isLocked    = false;
         private int                  _blockedCount = 0;
 
+        // Track pressed keys for emergency unlock
+        private bool _winPressed = false;
+        private bool _1Pressed = false;
+        private bool _2Pressed = false;
+        private bool _3Pressed = false;
+
+        [StructLayout(LayoutKind.Sequential)]
+        private struct KBDLLHOOKSTRUCT
+        {
+            public uint vkCode;
+            public uint scanCode;
+            public uint flags;
+            public uint time;
+            public IntPtr dwExtraInfo;
+        }
+
         private IntPtr HookCallback(int nCode, IntPtr wParam, IntPtr lParam)
         {
-            if (nCode >= HC_ACTION && _isLocked)
+            if (nCode >= HC_ACTION)
             {
-                int count = Interlocked.Increment(ref _blockedCount);
+                int msg = wParam.ToInt32();
+                KBDLLHOOKSTRUCT kbd = Marshal.PtrToStructure<KBDLLHOOKSTRUCT>(lParam);
+                uint vkCode = kbd.vkCode;
 
-                // Marshal UI update back to the WPF Dispatcher — non-blocking
-                Dispatcher.BeginInvoke(DispatcherPriority.Background,
-                    (Action)(() => OnKeyBlocked(count)));
+                bool isDown = (msg == WM_KEYDOWN || msg == WM_SYSKEYDOWN);
+                bool isUp   = (msg == WM_KEYUP || msg == WM_SYSKEYUP);
 
-                return (IntPtr)1; // ← non-zero = suppress the key event
+                if (isDown || isUp)
+                {
+                    if (vkCode == 0x5B || vkCode == 0x5C) _winPressed = isDown; // LWIN or RWIN
+                    if (vkCode == 0x31) _1Pressed = isDown; // 1
+                    if (vkCode == 0x32) _2Pressed = isDown; // 2
+                    if (vkCode == 0x33) _3Pressed = isDown; // 3
+                }
+
+                // Emergency unlock: Win + 1 + 2 + 3
+                if (_isLocked && _winPressed && _1Pressed && _2Pressed && _3Pressed)
+                {
+                    // Reset state
+                    _winPressed = _1Pressed = _2Pressed = _3Pressed = false;
+                    Dispatcher.BeginInvoke(DispatcherPriority.Normal, (Action)(() => 
+                    {
+                        if (_isLocked) UnlockBtn_Click(this, new RoutedEventArgs());
+                    }));
+                    return (IntPtr)1; // Suppress the final key press
+                }
+
+                // If locked, suppress all keyboard input
+                if (_isLocked)
+                {
+                    // Don't count key-up events as blocked key presses, only key-downs
+                    if (isDown)
+                    {
+                        int count = Interlocked.Increment(ref _blockedCount);
+                        Dispatcher.BeginInvoke(DispatcherPriority.Background,
+                            (Action)(() => OnKeyBlocked(count)));
+                    }
+                    return (IntPtr)1; // ← non-zero = suppress the key event
+                }
             }
             return CallNextHookEx(_hookHandle, nCode, wParam, lParam);
         }
@@ -160,6 +215,14 @@ namespace KeyShield
                 g.DrawString("K", new Font("Segoe UI", 8, System.Drawing.FontStyle.Bold),
                     System.Drawing.Brushes.White, new PointF(2, 1));
             }
+
+            var hIcon = bmp.GetHicon();
+            
+            // Set Window (taskbar) Icon
+            this.Icon = Imaging.CreateBitmapSourceFromHIcon(
+                hIcon,
+                Int32Rect.Empty,
+                BitmapSizeOptions.FromEmptyOptions());
 
             _trayMenu = new ContextMenuStrip();
             _trayMenu.BackColor   = System.Drawing.Color.FromArgb(16, 16, 30);
