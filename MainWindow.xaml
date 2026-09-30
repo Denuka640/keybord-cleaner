@@ -332,7 +332,7 @@
 
                         <!-- Subtitle -->
                         <TextBlock Grid.Row="2"
-                                   Text="Press Lock to block ALL keys — Windows key included.&#10;Your touchpad and mouse stay fully active."
+                                   Text="Press Lock to block ALL keys — Windows key included.&#10;Emergency Unlock: Hold Win + 1 + 2 + 3"
                                    FontFamily="Segoe UI" FontSize="11.5"
                                    Foreground="{StaticResource MutedBrush}"
                                    TextAlignment="Center" HorizontalAlignment="Center"
@@ -524,9 +524,10 @@
                         </Button>
 
                         <TextBlock Grid.Row="7"
-                                   Text="Click with touchpad or mouse to unlock"
+                                   Text="Click with touchpad or mouse to unlock&#10;Emergency Unlock: Hold Win + 1 + 2 + 3"
                                    FontFamily="Segoe UI" FontSize="9.5"
                                    Foreground="{StaticResource SubtleBrush}"
+                                   TextAlignment="Center"
                                    HorizontalAlignment="Center" Margin="0,7,0,0"/>
                     </Grid>
 
