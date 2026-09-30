@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>KeyShield — Keyboard Cleaner</title>
+  <meta name="description" content="Lock your keyboard instantly for safe cleaning. Re-enable with a single click. Modern, minimal, and effective." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- Animated background particles -->
+  <div class="bg-layer" id="bgLayer"></div>
+
+  <!-- Main App Container -->
+  <div class="app-container">
+
+    <!-- Header -->
+    <header class="app-header">
+      <div class="logo">
+        <div class="logo-icon">
+          <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect x="4" y="14" width="40" height="26" rx="5" stroke="currentColor" stroke-width="2.5" fill="none"/>
+            <rect x="9" y="20" width="6" height="5" rx="1.5" fill="currentColor" opacity="0.7"/>
+            <rect x="19" y="20" width="6" height="5" rx="1.5" fill="currentColor" opacity="0.7"/>
+            <rect x="29" y="20" width="6" height="5" rx="1.5" fill="currentColor" opacity="0.7"/>
+            <rect x="9" y="29" width="6" height="5" rx="1.5" fill="currentColor" opacity="0.7"/>
+            <rect x="19" y="29" width="16" height="5" rx="1.5" fill="currentColor" opacity="0.9"/>
+            <rect x="39" y="29" width="0" height="5" rx="1.5" fill="currentColor" opacity="0.7"/>
+            <!-- Lock overlay hint -->
+            <circle cx="38" cy="10" r="9" fill="url(#lockGrad)" />
+            <path d="M35 10.5V9.5a3 3 0 0 1 6 0v1" stroke="#fff" stroke-width="1.5" stroke-linecap="round" fill="none"/>
+            <rect x="33.5" y="10.5" width="9" height="6.5" rx="1.5" fill="#fff" opacity="0.9"/>
+            <circle cx="38" cy="13.5" r="1" fill="#7c3aed"/>
+            <defs>
+              <linearGradient id="lockGrad" x1="29" y1="1" x2="47" y2="19" gradientUnits="userSpaceOnUse">
+                <stop stop-color="#7c3aed"/>
+                <stop offset="1" stop-color="#06b6d4"/>
+              </linearGradient>
+            </defs>
+          </svg>
+        </div>
+        <div class="logo-text">
+          <span class="logo-name">KeyShield</span>
+          <span class="logo-sub">Keyboard Cleaner</span>
+        </div>
+      </div>
+      <div class="status-pill" id="statusPill">
+        <span class="status-dot" id="statusDot"></span>
+        <span class="status-label" id="statusLabel">READY</span>
+      </div>
+    </header>
+
+    <!-- Main Card -->
+    <main class="main-card glass-card">
+
+      <!-- Idle State -->
+      <div class="state-panel" id="idlePanel">
+        <div class="icon-area idle-icon">
+          <div class="icon-glow"></div>
+          <svg class="key-icon" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="40" cy="40" r="36" stroke="url(#idleGrad)" stroke-width="2" fill="none" stroke-dasharray="6 4" class="spin-ring"/>
+            <rect x="14" y="26" width="52" height="34" rx="7" stroke="url(#idleGrad)" stroke-width="2" fill="url(#cardFill)"/>
+            <rect x="20" y="33" width="8" height="7" rx="2" fill="url(#idleGrad)" opacity="0.8"/>
+            <rect x="32" y="33" width="8" height="7" rx="2" fill="url(#idleGrad)" opacity="0.8"/>
+            <rect x="44" y="33" width="8" height="7" rx="2" fill="url(#idleGrad)" opacity="0.8"/>
+            <rect x="56" y="33" width="8" height="7" rx="2" fill="url(#idleGrad)" opacity="0.8"/>
+            <rect x="20" y="45" width="8" height="7" rx="2" fill="url(#idleGrad)" opacity="0.6"/>
+            <rect x="32" y="45" width="20" height="7" rx="2" fill="url(#idleGrad)" opacity="0.9"/>
+            <rect x="56" y="45" width="8" height="7" rx="2" fill="url(#idleGrad)" opacity="0.6"/>
+            <defs>
+              <linearGradient id="idleGrad" x1="14" y1="26" x2="66" y2="60" gradientUnits="userSpaceOnUse">
+                <stop stop-color="#a78bfa"/>
+                <stop offset="1" stop-color="#22d3ee"/>
+              </linearGradient>
+              <linearGradient id="cardFill" x1="14" y1="26" x2="66" y2="60" gradientUnits="userSpaceOnUse">
+                <stop stop-color="#1e1b4b" stop-opacity="0.6"/>
+                <stop offset="1" stop-color="#0c4a6e" stop-opacity="0.6"/>
+              </linearGradient>
+            </defs>
+          </svg>
+        </div>
+        <h1 class="panel-title">Clean Your Keyboard</h1>
+        <p class="panel-desc">Press the button below to lock all keyboard input. Wipe those keys freely — your mouse &amp; touchpad stay fully active.</p>
+        <div class="features-row">
+          <div class="feature-chip"><span class="chip-icon">⌨️</span> Keys Blocked</div>
+          <div class="feature-chip"><span class="chip-icon">🖱️</span> Mouse Active</div>
+          <div class="feature-chip"><span class="chip-icon">🛡️</span> Safe Clean</div>
+        </div>
+        <button class="action-btn lock-btn" id="lockBtn" onclick="lockKeyboard()">
+          <span class="btn-glow"></span>
+          <svg class="btn-icon" viewBox="0 0 24 24" fill="none"><path d="M7 11V8a5 5 0 0 1 10 0v3" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><rect x="3" y="11" width="18" height="12" rx="3" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="12" cy="17" r="1.5" fill="currentColor"/></svg>
+          <span class="btn-text">Lock Keyboard</span>
+          <span class="btn-shortcut">Click to Activate</span>
+        </button>
+      </div>
+
+      <!-- Locked State -->
+      <div class="state-panel hidden" id="lockedPanel">
+        <div class="icon-area locked-icon">
+          <div class="icon-glow locked-glow pulse-glow"></div>
+          <div class="lock-badge">
+            <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg" class="lock-svg">
+              <circle cx="32" cy="32" r="30" fill="url(#lockBg)" stroke="url(#lockBorder)" stroke-width="1.5"/>
+              <path d="M21 30V25a11 11 0 0 1 22 0v5" stroke="#fff" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+              <rect x="15" y="30" width="34" height="22" rx="5" fill="white" opacity="0.12" stroke="white" stroke-width="1.5"/>
+              <circle cx="32" cy="41" r="3" fill="white"/>
+              <rect x="30.5" y="41" width="3" height="5" rx="1.5" fill="white"/>
+              <defs>
+                <radialGradient id="lockBg" cx="50%" cy="50%" r="50%">
+                  <stop stop-color="#7c3aed" stop-opacity="0.8"/>
+                  <stop offset="1" stop-color="#0891b2" stop-opacity="0.9"/>
+                </radialGradient>
+                <linearGradient id="lockBorder" x1="2" y1="2" x2="62" y2="62" gradientUnits="userSpaceOnUse">
+                  <stop stop-color="#c4b5fd"/>
+                  <stop offset="1" stop-color="#67e8f9"/>
+                </linearGradient>
+              </defs>
+            </svg>
+          </div>
+        </div>
+
+        <h1 class="panel-title locked-title">Keyboard Locked</h1>
+        <p class="panel-desc">All keyboard input is now <strong>blocked</strong>. Go ahead and clean your keys thoroughly!</p>
+
+        <!-- Key press counter -->
+        <div class="counter-card">
+          <div class="counter-label">Blocked Key Presses</div>
+          <div class="counter-value" id="keyCounter">0</div>
+          <div class="counter-bar-wrap"><div class="counter-bar" id="counterBar"></div></div>
+        </div>
+
+        <!-- Timer -->
+        <div class="timer-display">
+          <span class="timer-icon">⏱</span>
+          <span class="timer-text" id="timerDisplay">00:00</span>
+        </div>
+
+        <button class="action-btn unlock-btn" id="unlockBtn" onclick="unlockKeyboard()">
+          <span class="btn-glow unlock-glow"></span>
+          <svg class="btn-icon" viewBox="0 0 24 24" fill="none"><path d="M17 11V8a5 5 0 0 0-9.9-1" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><rect x="3" y="11" width="18" height="12" rx="3" fill="none" stroke="currentColor" stroke-width="2"/><path d="M12 15v4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+          <span class="btn-text">Unlock Keyboard</span>
+          <span class="btn-shortcut">Click with touchpad / mouse</span>
+        </button>
+      </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="app-footer">
+      <span>KeyShield &copy; 2026</span>
+      <span class="footer-divider">·</span>
+      <span>Use touchpad or mouse to unlock</span>
+    </footer>
+
+  </div>
+
+  <!-- Toast notification -->
+  <div class="toast" id="toast"></div>
+
+  <script src="app.js"></script>
+</body>
+</html>
