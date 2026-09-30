@@ -1,0 +1,69 @@
+## .NET / C# / WPF ──────────────────────────────────
+# Build outputs
+bin/
+obj/
+
+# NuGet packages
+*.nupkg
+*.snupkg
+packages/
+.nuget/
+
+# Publish output
+publish/
+
+# Visual Studio files
+.vs/
+*.user
+*.suo
+*.sln.docstates
+*.userosscache
+*.sdf
+*.opensdf
+
+# Rider
+.idea/
+*.sln.iml
+
+# VS Code
+.vscode/
+!.vscode/extensions.json
+!.vscode/launch.json
+
+# Roslyn analyzer results
+*.sarif
+
+# Crash / test logs
+TestResults/
+*.trx
+*.coverage
+
+# Dotnet tool manifests
+.config/dotnet-tools.json
+
+## Windows ────────────────────────────────────────────
+Thumbs.db
+Thumbs.db:encryptable
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+## macOS ──────────────────────────────────────────────
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+
+## Editor backups ─────────────────────────────────────
+*~
+*.bak
+*.orig
+*.swp
+*.swo
+
+## Secrets / env ──────────────────────────────────────
+*.env
+*.local
+appsettings.*.json
+!appsettings.json
+secrets.json

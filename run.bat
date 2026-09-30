@@ -1,0 +1,3 @@
+@echo off
+title KeyShield — Running...
+dotnet run --project "D:\visual studio projects\keybord cleaner\KeyShield.csproj" -c Release

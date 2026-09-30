@@ -1,0 +1,537 @@
+<Window x:Class="KeyShield.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="KeyShield — Keyboard Cleaner"
+        Width="440" Height="600"
+        MinWidth="440" MinHeight="600"
+        MaxWidth="440" MaxHeight="600"
+        WindowStartupLocation="CenterScreen"
+        AllowsTransparency="True"
+        WindowStyle="None"
+        Background="Transparent"
+        ResizeMode="NoResize"
+        StateChanged="Window_StateChanged">
+
+    <Window.Resources>
+        <!-- ── Brushes ── -->
+        <SolidColorBrush x:Key="PurpleBrush"  Color="#7C3AED"/>
+        <SolidColorBrush x:Key="PurpleLBrush" Color="#A78BFA"/>
+        <SolidColorBrush x:Key="CyanLBrush"   Color="#67E8F9"/>
+        <SolidColorBrush x:Key="RedBrush"     Color="#F43F5E"/>
+        <SolidColorBrush x:Key="RedLBrush"    Color="#FDA4AF"/>
+        <SolidColorBrush x:Key="GreenBrush"   Color="#10B981"/>
+        <SolidColorBrush x:Key="MutedBrush"   Color="#64748B"/>
+        <SolidColorBrush x:Key="SubtleBrush"  Color="#334155"/>
+        <SolidColorBrush x:Key="TextBrush"    Color="#F1F5F9"/>
+
+        <!-- ── Chip ── -->
+        <Style x:Key="Chip" TargetType="Border">
+            <Setter Property="Background"      Value="#1C1C2E"/>
+            <Setter Property="BorderBrush"     Value="#2A2A44"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="CornerRadius"    Value="999"/>
+            <Setter Property="Padding"         Value="10,5"/>
+            <Setter Property="Margin"          Value="3,0"/>
+        </Style>
+
+        <!-- ── Primary Button ── -->
+        <Style x:Key="PrimaryBtn" TargetType="Button">
+            <Setter Property="Height"         Value="52"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Foreground"     Value="White"/>
+            <Setter Property="FontFamily"     Value="Segoe UI"/>
+            <Setter Property="FontSize"       Value="14"/>
+            <Setter Property="FontWeight"     Value="SemiBold"/>
+            <Setter Property="Cursor"         Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="Root" CornerRadius="10"
+                                Background="{TemplateBinding Background}"
+                                BorderThickness="0">
+                            <Border.Effect>
+                                <DropShadowEffect x:Name="Shadow"
+                                    Color="#7C3AED" BlurRadius="20"
+                                    ShadowDepth="0" Opacity="0.45"/>
+                            </Border.Effect>
+                            <Grid>
+                                <!-- Shine layer -->
+                                <Border CornerRadius="10,10,0,0" Height="26"
+                                        VerticalAlignment="Top" Opacity="0.13"
+                                        IsHitTestVisible="False">
+                                    <Border.Background>
+                                        <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                                            <GradientStop Color="White"       Offset="0"/>
+                                            <GradientStop Color="Transparent" Offset="1"/>
+                                        </LinearGradientBrush>
+                                    </Border.Background>
+                                </Border>
+                                <ContentPresenter HorizontalAlignment="Center"
+                                                  VerticalAlignment="Center"/>
+                            </Grid>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Root"   Property="Opacity"  Value="0.88"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="Root"  Property="RenderTransformOrigin" Value="0.5,0.5"/>
+                                <Setter TargetName="Root"  Property="RenderTransform">
+                                    <Setter.Value><ScaleTransform ScaleX="0.97" ScaleY="0.97"/></Setter.Value>
+                                </Setter>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- ── Title Bar Icon Button ── -->
+        <Style x:Key="TitleBtn" TargetType="Button">
+            <Setter Property="Width"          Value="30"/>
+            <Setter Property="Height"         Value="30"/>
+            <Setter Property="Background"     Value="Transparent"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Foreground"     Value="#4B5563"/>
+            <Setter Property="FontFamily"     Value="Segoe UI"/>
+            <Setter Property="FontSize"       Value="12"/>
+            <Setter Property="Cursor"         Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="Bg" CornerRadius="6" Background="Transparent">
+                            <ContentPresenter HorizontalAlignment="Center"
+                                              VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Bg" Property="Background" Value="#FFFFFF10"/>
+                                <Setter Property="Foreground" Value="#F1F5F9"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- Close button variant (red hover) -->
+        <Style x:Key="CloseTitleBtn" TargetType="Button" BasedOn="{StaticResource TitleBtn}">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="Bg" CornerRadius="6" Background="Transparent">
+                            <ContentPresenter HorizontalAlignment="Center"
+                                              VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Bg" Property="Background" Value="#F43F5E25"/>
+                                <Setter Property="Foreground" Value="#F43F5E"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Window.Resources>
+
+    <!-- ╔════════════════════════════════════════╗ -->
+    <!-- ║  Root: rounded dark glass window       ║ -->
+    <!-- ╚════════════════════════════════════════╝ -->
+    <Border CornerRadius="18" ClipToBounds="True">
+        <Border.Background>
+            <LinearGradientBrush StartPoint="0,0" EndPoint="0.6,1">
+                <GradientStop Color="#0B0B14" Offset="0"/>
+                <GradientStop Color="#0F0F1E" Offset="1"/>
+            </LinearGradientBrush>
+        </Border.Background>
+        <Border.Effect>
+            <DropShadowEffect Color="Black" BlurRadius="50"
+                              ShadowDepth="10" Opacity="0.75"/>
+        </Border.Effect>
+
+        <Grid>
+            <!-- ── Ambient background glow (purple top-left) ── -->
+            <Ellipse Width="340" Height="300" Opacity="0.10"
+                     HorizontalAlignment="Left" VerticalAlignment="Top"
+                     Margin="-80,-60,0,0" IsHitTestVisible="False">
+                <Ellipse.Fill>
+                    <RadialGradientBrush>
+                        <GradientStop Color="#7C3AED" Offset="0"/>
+                        <GradientStop Color="Transparent" Offset="1"/>
+                    </RadialGradientBrush>
+                </Ellipse.Fill>
+            </Ellipse>
+            <!-- Cyan bottom-right -->
+            <Ellipse Width="260" Height="240" Opacity="0.08"
+                     HorizontalAlignment="Right" VerticalAlignment="Bottom"
+                     Margin="0,0,-50,-50" IsHitTestVisible="False">
+                <Ellipse.Fill>
+                    <RadialGradientBrush>
+                        <GradientStop Color="#06B6D4" Offset="0"/>
+                        <GradientStop Color="Transparent" Offset="1"/>
+                    </RadialGradientBrush>
+                </Ellipse.Fill>
+            </Ellipse>
+
+            <!-- ── Window outer border ring ── -->
+            <Border CornerRadius="18" BorderThickness="1" IsHitTestVisible="False">
+                <Border.BorderBrush>
+                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                        <GradientStop Color="#2A2A46" Offset="0"/>
+                        <GradientStop Color="#1A1A30" Offset="1"/>
+                    </LinearGradientBrush>
+                </Border.BorderBrush>
+            </Border>
+
+            <!-- ══ MAIN STACK ══ -->
+            <DockPanel Margin="0">
+
+                <!-- ── TITLE BAR ── -->
+                <Grid DockPanel.Dock="Top" Height="46"
+                      x:Name="TitleBar" MouseLeftButtonDown="TitleBar_MouseDown"
+                      Background="Transparent">
+
+                    <!-- Gradient separator line at bottom -->
+                    <Rectangle Height="1" VerticalAlignment="Bottom" Opacity="0.3">
+                        <Rectangle.Fill>
+                            <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                                <GradientStop Color="Transparent" Offset="0"/>
+                                <GradientStop Color="#7C3AED"     Offset="0.4"/>
+                                <GradientStop Color="#06B6D4"     Offset="0.6"/>
+                                <GradientStop Color="Transparent" Offset="1"/>
+                            </LinearGradientBrush>
+                        </Rectangle.Fill>
+                    </Rectangle>
+
+                    <StackPanel Orientation="Horizontal"
+                                HorizontalAlignment="Left"
+                                VerticalAlignment="Center"
+                                Margin="16,0,0,0">
+                        <!-- Shield icon box -->
+                        <Border Width="28" Height="28" CornerRadius="7" Margin="0,0,8,0">
+                            <Border.Background>
+                                <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                    <GradientStop Color="#2D1B69" Offset="0"/>
+                                    <GradientStop Color="#0C2A4A" Offset="1"/>
+                                </LinearGradientBrush>
+                            </Border.Background>
+                            <TextBlock Text="🛡️" FontSize="14"
+                                       HorizontalAlignment="Center"
+                                       VerticalAlignment="Center"/>
+                        </Border>
+                        <TextBlock Text="KeyShield"
+                                   FontFamily="Segoe UI" FontSize="13" FontWeight="SemiBold"
+                                   Foreground="{StaticResource PurpleLBrush}"
+                                   VerticalAlignment="Center"/>
+                        <TextBlock Text=" — Keyboard Cleaner"
+                                   FontFamily="Segoe UI" FontSize="11"
+                                   Foreground="{StaticResource MutedBrush}"
+                                   VerticalAlignment="Center"/>
+                    </StackPanel>
+
+                    <!-- Window control buttons -->
+                    <StackPanel Orientation="Horizontal"
+                                HorizontalAlignment="Right"
+                                VerticalAlignment="Center"
+                                Margin="0,0,10,0">
+                        <Button x:Name="MinBtn" Content="⎯"
+                                Style="{StaticResource TitleBtn}"
+                                Click="MinBtn_Click"/>
+                        <Button x:Name="TrayBtn" Content="📌"
+                                ToolTip="Minimize to Tray"
+                                Style="{StaticResource TitleBtn}"
+                                FontSize="10"
+                                Click="TrayBtn_Click"/>
+                        <Button x:Name="CloseBtn" Content="✕"
+                                Style="{StaticResource CloseTitleBtn}"
+                                Click="CloseBtn_Click"/>
+                    </StackPanel>
+                </Grid>
+
+                <!-- ── FOOTER ── -->
+                <Border DockPanel.Dock="Bottom" Height="32"
+                        Background="Transparent">
+                    <Border.BorderBrush>
+                        <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                            <GradientStop Color="Transparent" Offset="0"/>
+                            <GradientStop Color="#1E1E38"     Offset="0.3"/>
+                            <GradientStop Color="#1E1E38"     Offset="0.7"/>
+                            <GradientStop Color="Transparent" Offset="1"/>
+                        </LinearGradientBrush>
+                    </Border.BorderBrush>
+                    <Border.BorderThickness>
+                        <Thickness Top="1" Bottom="0" Left="0" Right="0"/>
+                    </Border.BorderThickness>
+                    <TextBlock Text="All keys blocked · Touchpad and mouse remain active"
+                               FontFamily="Segoe UI" FontSize="9"
+                               Foreground="#22253A"
+                               HorizontalAlignment="Center"
+                               VerticalAlignment="Center"/>
+                </Border>
+
+                <!-- ── CONTENT AREA ── -->
+                <Grid Margin="22,16,22,0">
+
+                    <!-- Status pill (top-right) -->
+                    <Border x:Name="StatusPill"
+                            HorizontalAlignment="Right" VerticalAlignment="Top"
+                            Background="#0F1020" CornerRadius="999"
+                            BorderBrush="#1E2040" BorderThickness="1"
+                            Padding="10,5" Margin="0,0,0,12">
+                        <StackPanel Orientation="Horizontal">
+                            <Ellipse x:Name="StatusDot" Width="7" Height="7" Margin="0,0,6,0">
+                                <Ellipse.Fill>
+                                    <SolidColorBrush x:Name="DotColor" Color="#10B981"/>
+                                </Ellipse.Fill>
+                                <Ellipse.Effect>
+                                    <DropShadowEffect x:Name="DotGlow" Color="#10B981"
+                                        BlurRadius="6" ShadowDepth="0" Opacity="0.8"/>
+                                </Ellipse.Effect>
+                            </Ellipse>
+                            <TextBlock x:Name="StatusLabel" Text="READY"
+                                       FontFamily="Consolas" FontSize="9" FontWeight="Bold"
+                                       Foreground="{StaticResource TextBrush}"
+                                       VerticalAlignment="Center"/>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- ══ IDLE PANEL ══ -->
+                    <Grid x:Name="IdlePanel" Margin="0,36,0,0">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+
+                        <!-- Floating keyboard icon -->
+                        <Border Grid.Row="0" HorizontalAlignment="Center"
+                                VerticalAlignment="Center">
+                            <Border.RenderTransform>
+                                <TranslateTransform x:Name="IdleFloat" Y="0"/>
+                            </Border.RenderTransform>
+                            <TextBlock x:Name="IdleEmoji" Text="⌨️" FontSize="62"
+                                       HorizontalAlignment="Center">
+                                <TextBlock.Effect>
+                                    <DropShadowEffect x:Name="IdleGlow" Color="#7C3AED"
+                                        BlurRadius="24" ShadowDepth="0" Opacity="0.55"/>
+                                </TextBlock.Effect>
+                            </TextBlock>
+                        </Border>
+
+                        <!-- Title -->
+                        <TextBlock Grid.Row="1"
+                                   Text="Clean Your Keyboard"
+                                   FontFamily="Segoe UI" FontSize="22" FontWeight="Bold"
+                                   Foreground="{StaticResource TextBrush}"
+                                   HorizontalAlignment="Center"/>
+
+                        <!-- Subtitle -->
+                        <TextBlock Grid.Row="2"
+                                   Text="Press Lock to block ALL keys — Windows key included.&#10;Your touchpad and mouse stay fully active."
+                                   FontFamily="Segoe UI" FontSize="11.5"
+                                   Foreground="{StaticResource MutedBrush}"
+                                   TextAlignment="Center" HorizontalAlignment="Center"
+                                   LineHeight="19" Margin="0,9,0,0"/>
+
+                        <!-- Feature chips -->
+                        <StackPanel Grid.Row="3" Orientation="Horizontal"
+                                    HorizontalAlignment="Center" Margin="0,14,0,0">
+                            <Border Style="{StaticResource Chip}">
+                                <TextBlock Text="⌨️  Keys Blocked" FontFamily="Segoe UI" FontSize="10"
+                                           Foreground="{StaticResource MutedBrush}"/>
+                            </Border>
+                            <Border Style="{StaticResource Chip}">
+                                <TextBlock Text="🖱️  Mouse Active" FontFamily="Segoe UI" FontSize="10"
+                                           Foreground="{StaticResource MutedBrush}"/>
+                            </Border>
+                            <Border Style="{StaticResource Chip}">
+                                <TextBlock Text="🪟  Win Key Off" FontFamily="Segoe UI" FontSize="10"
+                                           Foreground="{StaticResource MutedBrush}"/>
+                            </Border>
+                        </StackPanel>
+
+                        <Grid Grid.Row="4"/>
+
+                        <!-- LOCK BUTTON -->
+                        <Button Grid.Row="5" x:Name="LockBtn"
+                                Style="{StaticResource PrimaryBtn}"
+                                Click="LockBtn_Click">
+                            <Button.Background>
+                                <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                    <GradientStop Color="#7C3AED" Offset="0"/>
+                                    <GradientStop Color="#0891B2" Offset="1"/>
+                                </LinearGradientBrush>
+                            </Button.Background>
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="🔒" FontSize="16" Margin="0,0,10,0"
+                                           VerticalAlignment="Center"/>
+                                <TextBlock Text="Lock Keyboard" FontFamily="Segoe UI"
+                                           FontSize="15" FontWeight="SemiBold"
+                                           VerticalAlignment="Center"/>
+                            </StackPanel>
+                        </Button>
+
+                        <TextBlock Grid.Row="6"
+                                   Text="Click with touchpad or mouse to activate"
+                                   FontFamily="Segoe UI" FontSize="9.5"
+                                   Foreground="{StaticResource SubtleBrush}"
+                                   HorizontalAlignment="Center" Margin="0,7,0,0"/>
+                    </Grid>
+
+                    <!-- ══ LOCKED PANEL ══ -->
+                    <Grid x:Name="LockedPanel" Visibility="Collapsed" Margin="0,36,0,0">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+
+                        <!-- Floating lock icon -->
+                        <Border Grid.Row="0" HorizontalAlignment="Center"
+                                VerticalAlignment="Center">
+                            <Border.RenderTransform>
+                                <TranslateTransform x:Name="LockFloat" Y="0"/>
+                            </Border.RenderTransform>
+                            <TextBlock Text="🔐" FontSize="66" HorizontalAlignment="Center">
+                                <TextBlock.Effect>
+                                    <DropShadowEffect x:Name="LockGlow" Color="#F43F5E"
+                                        BlurRadius="30" ShadowDepth="0" Opacity="0.6"/>
+                                </TextBlock.Effect>
+                            </TextBlock>
+                        </Border>
+
+                        <!-- Locked title -->
+                        <TextBlock Grid.Row="1" Text="Keyboard Locked"
+                                   FontFamily="Segoe UI" FontSize="22" FontWeight="Bold"
+                                   Foreground="{StaticResource RedLBrush}"
+                                   HorizontalAlignment="Center"/>
+
+                        <TextBlock Grid.Row="2"
+                                   Text="All key input is blocked system-wide.&#10;Clean your keyboard freely!"
+                                   FontFamily="Segoe UI" FontSize="11.5"
+                                   Foreground="{StaticResource MutedBrush}"
+                                   TextAlignment="Center" HorizontalAlignment="Center"
+                                   LineHeight="19" Margin="0,8,0,0"/>
+
+                        <!-- ── Counter card ── -->
+                        <Border Grid.Row="3" CornerRadius="12" Margin="0,14,0,0"
+                                BorderThickness="1">
+                            <Border.Background>
+                                <SolidColorBrush Color="#150610"/>
+                            </Border.Background>
+                            <Border.BorderBrush>
+                                <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                    <GradientStop Color="#3B0F25" Offset="0"/>
+                                    <GradientStop Color="#1E0818" Offset="1"/>
+                                </LinearGradientBrush>
+                            </Border.BorderBrush>
+                            <Border.Effect>
+                                <DropShadowEffect Color="#F43F5E" BlurRadius="18"
+                                                  ShadowDepth="0" Opacity="0.12"/>
+                            </Border.Effect>
+                            <Grid Margin="20,12">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                </Grid.RowDefinitions>
+                                <TextBlock Grid.Row="0"
+                                           Text="BLOCKED KEY PRESSES"
+                                           FontFamily="Consolas" FontSize="9" FontWeight="Bold"
+                                           Foreground="{StaticResource MutedBrush}"
+                                           HorizontalAlignment="Center"/>
+                                <TextBlock Grid.Row="1"
+                                           x:Name="CounterLabel" Text="0"
+                                           FontFamily="Consolas" FontSize="46" FontWeight="Bold"
+                                           Foreground="{StaticResource RedBrush}"
+                                           HorizontalAlignment="Center">
+                                    <TextBlock.RenderTransform>
+                                        <ScaleTransform x:Name="CounterScale" ScaleX="1" ScaleY="1"
+                                                        CenterX="50" CenterY="30"/>
+                                    </TextBlock.RenderTransform>
+                                    <TextBlock.Effect>
+                                        <DropShadowEffect Color="#F43F5E" BlurRadius="14"
+                                                          ShadowDepth="0" Opacity="0.65"/>
+                                    </TextBlock.Effect>
+                                </TextBlock>
+                                <!-- Progress bar -->
+                                <Border Grid.Row="2" Height="3" CornerRadius="2"
+                                        Background="#2D1020" ClipToBounds="True"
+                                        Margin="0,4,0,0">
+                                    <Border x:Name="ProgressFill" CornerRadius="2"
+                                            HorizontalAlignment="Left" Width="0">
+                                        <Border.Background>
+                                            <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                                                <GradientStop Color="#F43F5E" Offset="0"/>
+                                                <GradientStop Color="#A78BFA" Offset="1"/>
+                                            </LinearGradientBrush>
+                                        </Border.Background>
+                                    </Border>
+                                </Border>
+                            </Grid>
+                        </Border>
+
+                        <!-- Timer pill -->
+                        <Border Grid.Row="4" Background="#0D0D1E" CornerRadius="999"
+                                BorderBrush="#1C1C38" BorderThickness="1"
+                                HorizontalAlignment="Center" Margin="0,10,0,0">
+                            <StackPanel Orientation="Horizontal" Margin="14,7">
+                                <TextBlock Text="⏱" FontSize="13" Margin="0,0,7,0"
+                                           VerticalAlignment="Center"/>
+                                <TextBlock x:Name="TimerLabel" Text="00:00"
+                                           FontFamily="Consolas" FontSize="15" FontWeight="Bold"
+                                           Foreground="{StaticResource CyanLBrush}"
+                                           VerticalAlignment="Center"/>
+                                <TextBlock Text=" elapsed" FontFamily="Segoe UI" FontSize="10"
+                                           Foreground="{StaticResource MutedBrush}"
+                                           VerticalAlignment="Center" Margin="4,0,0,0"/>
+                            </StackPanel>
+                        </Border>
+
+                        <Grid Grid.Row="5"/>
+
+                        <!-- UNLOCK BUTTON -->
+                        <Button Grid.Row="6" x:Name="UnlockBtn"
+                                Style="{StaticResource PrimaryBtn}"
+                                Click="UnlockBtn_Click">
+                            <Button.Background>
+                                <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                    <GradientStop Color="#BE123C" Offset="0"/>
+                                    <GradientStop Color="#6D28D9" Offset="1"/>
+                                </LinearGradientBrush>
+                            </Button.Background>
+                            <Button.Effect>
+                                <DropShadowEffect Color="#F43F5E" BlurRadius="20"
+                                                  ShadowDepth="0" Opacity="0.4"/>
+                            </Button.Effect>
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="🔓" FontSize="16" Margin="0,0,10,0"
+                                           VerticalAlignment="Center"/>
+                                <TextBlock Text="Unlock Keyboard" FontFamily="Segoe UI"
+                                           FontSize="15" FontWeight="SemiBold"
+                                           VerticalAlignment="Center"/>
+                            </StackPanel>
+                        </Button>
+
+                        <TextBlock Grid.Row="7"
+                                   Text="Click with touchpad or mouse to unlock"
+                                   FontFamily="Segoe UI" FontSize="9.5"
+                                   Foreground="{StaticResource SubtleBrush}"
+                                   HorizontalAlignment="Center" Margin="0,7,0,0"/>
+                    </Grid>
+
+                </Grid>
+            </DockPanel>
+        </Grid>
+    </Border>
+</Window>
